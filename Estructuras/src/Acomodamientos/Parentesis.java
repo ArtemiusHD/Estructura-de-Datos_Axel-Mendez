@@ -1,5 +1,7 @@
 package Acomodamientos;
 
+import Pilas.ArrayStack;
+
 import java.util.Scanner;
 
 public class Parentesis {

@@ -1,4 +1,4 @@
-package Acomodamientos;
+package Pilas;
 
 public class ArrayStack {
     private Object[] stack;
