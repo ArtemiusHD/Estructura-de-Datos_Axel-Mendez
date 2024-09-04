@@ -32,4 +32,13 @@ public class LinkedStack {
         }
         return valor;
     }
+    public String toString(){
+        String s = " ";
+        Nodo temp = apuntador;
+        while(null !=temp){
+            s+= "<" + temp.getValor();
+            temp=temp.getEnlace();
+        }
+        return s;
+    }
 }
