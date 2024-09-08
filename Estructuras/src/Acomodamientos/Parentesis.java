@@ -1,7 +1,5 @@
 package Acomodamientos;
-
-import Pilas.ArrayStack;
-
+import Pilas.LinkedStack;
 import java.util.Scanner;
 
 public class Parentesis {
@@ -9,6 +7,10 @@ public class Parentesis {
         Scanner leer = new Scanner(System.in);
         System.out.print("Ingresa una operacion: ");
         String cadena = leer.nextLine();
+        LinkedStack operadores = new LinkedStack();
+        LinkedStack operandos = new LinkedStack();
+        LinkedStack acomodamientoPolaca = new LinkedStack();
+        LinkedStack pivote = new LinkedStack();
         boolean resultado = validacion(cadena);
         System.out.println("Balance: " + resultado);
         int resultadoOperacion = fVeriExpresion(cadena);
@@ -21,7 +23,7 @@ public class Parentesis {
         return c == ')';
     }
     public static boolean validacion(String cadena) {
-        ArrayStack stack = new ArrayStack(cadena.length());
+        LinkedStack stack = new LinkedStack();
         for (char c : cadena.toCharArray()) {
             if (apertura(c)) {
                 stack.push(c);
@@ -36,7 +38,7 @@ public class Parentesis {
         return stack.isEmpty();
     }
     public static int fVeriExpresion (String cadena){
-        ArrayStack pilaCadena = new ArrayStack(cadena.length());
+        LinkedStack pilaCadena = new LinkedStack();
         for(int i = 0; i < cadena.length(); i++){
             char caracter = cadena.charAt(i);
             if(caracter>='0' && caracter<='9'){
