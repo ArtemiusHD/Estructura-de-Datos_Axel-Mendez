@@ -13,8 +13,14 @@ public class Parentesis {
         LinkedStack pivote = new LinkedStack();
         boolean resultado = validacion(cadena);
         System.out.println("Balance: " + resultado);
-        int resultadoOperacion = fVeriExpresion(cadena);
-        System.out.println("resultadoOperacion = " + resultadoOperacion);
+        if(resultado){
+            String resultadoPolaca = fNotaPolaca(cadena, operadores, operandos, acomodamientoPolaca, pivote);
+            System.out.println("resultadoPolaca = " + resultadoPolaca);
+            int resultadoOperacion = fOperacion(resultadoPolaca);
+            System.out.println("resultadoOperacion = " + resultadoOperacion);
+        }else {
+            System.out.println("Parentesis no balanceados");
+        }
     }
     public static boolean apertura(char c) {
         return c == '(';
@@ -27,8 +33,7 @@ public class Parentesis {
         for (char c : cadena.toCharArray()) {
             if (apertura(c)) {
                 stack.push(c);
-            }
-            else if (cierre(c)) {
+            } else if (cierre(c)) {
                 if (stack.isEmpty()) {
                     return false;
                 }
@@ -37,35 +42,97 @@ public class Parentesis {
         }
         return stack.isEmpty();
     }
-    public static int fVeriExpresion (String cadena){
-        LinkedStack pilaCadena = new LinkedStack();
-        for(int i = 0; i < cadena.length(); i++){
-            char caracter = cadena.charAt(i);
-            if(caracter>='0' && caracter<='9'){
-                pilaCadena.push(caracter - '0');
-            } else if (caracter == '+' || caracter == '-' || caracter == '*' || caracter == '/') {
-                pilaCadena.push(caracter);
-            } else if (caracter == ')') {
-               int numero2 = (int) pilaCadena.pop();
-               char operacion = (char) pilaCadena.pop();
-               int numero1 = (int) pilaCadena.pop();
-               int resultado = fOperacion(numero1,numero2,operacion);
-               pilaCadena.push(resultado);
+    public static int fjerarquiaOp(char operador){
+        switch (operador){
+            case '+':
+            case '-':
+                return 1;
+            case '*':
+            case '/':
+                return 2;
+            default:
+                return 0;
+        }
+    }
+    public static String fNotaPolaca(String cadena, LinkedStack operadores, LinkedStack operandos, LinkedStack acomodamientoPolaca, LinkedStack pivote) {
+        StringBuilder resultado = new StringBuilder();
+        for (char caracter : cadena.toCharArray()) {
+            if (Character.isDigit(caracter)) {
+                operandos.push(caracter);
+                acomodamientoPolaca.push(caracter);
+                resultado.append(caracter).append(' ');
+            }
+            else if (apertura(caracter)) {
+                operadores.push(caracter);
+            }
+            else if (cierre(caracter)) {
+                while (!operadores.isEmpty()) {
+                    char top = (char) operadores.pop();
+                    if (top == '(') {
+                        break;
+                    }
+                    pivote.push(top);
+                    acomodamientoPolaca.push(top);
+                    resultado.append(top).append(' ');
+                }
+            }
+            else if (fjerarquiaOp(caracter) > 0) {
+                while (!operadores.isEmpty()) {
+                    char top = (char) operadores.pop();
+                    if (fjerarquiaOp(top) < fjerarquiaOp(caracter)) {
+                        operadores.push(top);
+                        break;
+                    } else {
+                        acomodamientoPolaca.push(top);
+                        resultado.append(top).append(' ');
+                    }
+                }
+                operadores.push(caracter);
             }
         }
-        return (int) pilaCadena.pop();
-    }
-    public static int fOperacion (int numero1, int numero2, char operacion){
-        int resultado = 0;
-        if(operacion == '+'){
-            resultado = numero1 + numero2;
-        } else if (operacion == '-') {
-            resultado = numero1 - numero2;
-        } else if (operacion == '*') {
-            resultado = numero1 * numero2;
-        } else if (operacion == '/') {
-            resultado = (numero2 != 0)? numero1/numero2: 0;
+        while (!operadores.isEmpty()) {
+            char top = (char) operadores.pop();
+            acomodamientoPolaca.push(top);
+            resultado.append(top).append(' ');
         }
-        return resultado;
+        return resultado.toString().trim();
+    }
+    public static boolean fVeriNumero (String elemento){
+        if(elemento == null || elemento.isEmpty()){
+            return false;
+        }
+        for(int i = 0; i < elemento.length(); i++){
+            if(!Character.isDigit(elemento.charAt(i))){
+                return false;
+            }
+        }
+        return true;
+    }
+    public static int fOperacion (String polaca){
+        LinkedStack pila = new LinkedStack();
+        String[] elementos = polaca.split(" ");
+        for(String elemento : elementos){
+            if(fVeriNumero(elemento)){
+                pila.push(Integer.parseInt(elemento));
+            }else{
+                int b = (int) pila.pop();
+                int a = (int) pila.pop();
+                switch (elemento.charAt(0)){
+                    case '+':
+                        pila.push(a + b);
+                        break;
+                    case '-':
+                        pila.push(a - b);
+                        break;
+                    case '*':
+                        pila.push(a * b);
+                        break;
+                    case '/':
+                        pila.push(a / b);
+                        break;
+                }
+            }
+        }
+        return (int) pila.pop();
     }
 }
