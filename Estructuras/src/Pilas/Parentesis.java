@@ -1,5 +1,4 @@
-package Acomodamientos;
-import Pilas.LinkedStack;
+package Pilas;
 import java.util.Scanner;
 
 public class Parentesis {
