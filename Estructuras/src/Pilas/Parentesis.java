@@ -20,6 +20,7 @@ public class Parentesis {
         }else {
             System.out.println("Parentesis no balanceados");
         }
+        leer.close();
     }
     public static boolean apertura(char c) {
         return c == '(';
@@ -128,7 +129,7 @@ public class Parentesis {
                         break;
                     case '/':
                         pila.push(a / b);
-                        break;
+                        
                 }
             }
         }
