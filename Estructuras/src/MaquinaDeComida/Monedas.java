@@ -1,37 +1,28 @@
 package MaquinaDeComida;
 
-import Queue.CircularQueue;
-
 public class Monedas {
-    public CircularQueue[] monedas;
-    private String[] tiposMonedas = {
-      "10 pesos", "5 pesos", "2 pesos", "1 peso", "0.50 pesos"
-    };
-    public Monedas(){
-        monedas = new CircularQueue[5];
-        for (int i = 0; i < monedas.length; i++){
-            monedas[i] = new CircularQueue(15);
-        }
+    private String tipoMoneda;
+    private int cantidad;
+    public Monedas(String tipoMoneda, int cantidad) {
+        this.tipoMoneda = tipoMoneda;
+        this.cantidad = cantidad;
     }
-    public void rellenarMonedas(int indice, Object item){
-        if(indice >= 0 && indice < monedas.length){
-            while(!monedas[indice].isFull()){
-                monedas[indice].enqueue(item);
-            }
-        }else{
-            System.out.println("Moneda fuera de rango");
-        }
+    public String getTipoMoneda() {
+        return tipoMoneda;
     }
-    public void mostrarMonedas(){
-        for(int i = 0; i < monedas.length; i++){
-            System.out.println("Monedas de " + tiposMonedas[i] + ": " + monedas[i].toString());
-        }
+
+    public int getCantidad() {
+        return cantidad;
     }
-    public int contarMonedas(){
-        int total = 0;
-        for(int i = 0; i < monedas.length; i++){
-            total += monedas[i].getSize();
+    public void agregarMonedas(int cantidadAgregar) {
+        this.cantidad += cantidadAgregar;
+    }
+    public void retirarMonedas(int cantidadRetirar) {
+        if (cantidad >= cantidadRetirar) {
+            cantidad -= cantidadRetirar;
+        } else {
+            System.out.println("No hay suficientes monedas de este tipo.");
         }
-        return total;
     }
 }
+
