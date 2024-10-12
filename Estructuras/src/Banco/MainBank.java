@@ -1,6 +1,11 @@
 package Banco;
 import java.util.Scanner;
+import Queue.NumericPriorityQueue;
+
 public class MainBank {
+    private static NumericPriorityQueue colaPrioridad1 = new NumericPriorityQueue();
+    private static NumericPriorityQueue colaPrioridad2 = new NumericPriorityQueue();
+    private static NumericPriorityQueue colaPrioridad3 = new NumericPriorityQueue();
     public static void main(String[] args) {
         Scanner leer = new Scanner(System.in);
         Banco banco = new Banco();
@@ -12,11 +17,11 @@ public class MainBank {
         Persona[] clientesAsignados = new Persona[4];
         while (true) {
             System.out.println("""
-                    Para admitir a un cliente presione: 1
-                    Para pasar a un cliente a su fila correspondiene presione: 2
-                    Para atender una caja presione: 3
-                    Para consultar el estado de las fila presione: 4
-                    Para salir presione: 5""");
+                Para admitir a un cliente presione: 1
+                Para pasar a un cliente a su fila correspondiene presione: 2
+                Para atender una caja presione: 3
+                Para consultar el estado de las fila presione: 4
+                Para salir presione: 5""");
             System.out.print("Seleccione una opción: ");
             int opcion = Integer.parseInt(leer.nextLine());
             System.out.println("----------------------------------------");
@@ -28,10 +33,21 @@ public class MainBank {
                     saldo = Double.parseDouble(leer.nextLine());
                     System.out.print("¿El cliente tiene cuenta? (s/n): ");
                     tipoCliente = leer.nextLine();
-
                     if (tipoCliente.equalsIgnoreCase("s")) {
+                        System.out.print("Ingrese el número de cuenta: ");
+                        String numeroCuenta = leer.nextLine();
+
+                        int prioridad = obtenerPrioridad(numeroCuenta);
+                        if (prioridad == -1) {
+                            System.out.println("Número de cuenta no reconocido. Intente nuevamente.");
+                            continue;
+                        }
                         clienteConCuenta = new ClienteConCuenta(nombre, saldo);
-                        banco.agregarCliente(clienteConCuenta);
+                        switch (prioridad) {
+                            case 1 -> colaPrioridad1.enqueue(clienteConCuenta, prioridad);
+                            case 2 -> colaPrioridad2.enqueue(clienteConCuenta, prioridad);
+                            case 3 -> colaPrioridad3.enqueue(clienteConCuenta, prioridad);
+                        }
                     } else {
                         clienteSinCuenta = new ClienteSinCuenta(nombre, saldo);
                         banco.agregarCliente(clienteSinCuenta);
@@ -40,7 +56,7 @@ public class MainBank {
                     System.out.println("----------------------------------------");
                     break;
                 case 2:
-                    Persona cliente = banco.siguienteCliente();
+                    Persona cliente = obtenerSiguienteCliente();
                     if (cliente == null) {
                         System.out.println("No hay más clientes en la fila.");
                         System.out.println("----------------------------------------");
@@ -116,7 +132,10 @@ public class MainBank {
                     break;
                 case 4:
                     System.out.println("Estado de las filas:");
-                    System.out.println(banco.mostrarFila());
+                    System.out.println("Fila General: " + banco.mostrarFila());
+                    System.out.println("Fila Prioridad 1: " + colaPrioridad1.toString());
+                    System.out.println("Fila Prioridad 2: " + colaPrioridad2.toString());
+                    System.out.println("Fila Prioridad 3: " + colaPrioridad3.toString());
                     System.out.println("----------------------------------------");
                     break;
                 case 5:
@@ -128,9 +147,27 @@ public class MainBank {
             }
         }
     }
-    //NOTA: En esta tarea, en el main me apoye de inteligencia artificial y tantito en como dividi las clases para poder meter herencias
+    private static int obtenerPrioridad(String numeroCuenta) {
+        if (numeroCuenta.startsWith("042")) {
+            return 1;
+        } else if (numeroCuenta.startsWith("022")) {
+            return 2;
+        } else if (numeroCuenta.startsWith("011")) {
+            return 3;
+        } else {
+            return -1;
+        }
+    }
+    private static Persona obtenerSiguienteCliente() {
+        if (!colaPrioridad1.isEmpty()) {
+            return (Persona) colaPrioridad1.dequeue();
+        } else if (!colaPrioridad2.isEmpty()) {
+            return (Persona) colaPrioridad2.dequeue();
+        } else if (!colaPrioridad3.isEmpty()) {
+            return (Persona) colaPrioridad3.dequeue();
+        } else {
+            Banco banco = new Banco();
+            return banco.siguienteCliente();
+        }
+    }
 }
-
-
-
-
