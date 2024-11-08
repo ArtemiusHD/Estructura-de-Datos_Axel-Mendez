@@ -13,7 +13,7 @@ public class Binaria {
         for (int i = 1; i <= 10; i++) {
             lista.add(i);
         }
-        System.out.println("Piensa en un número del 1 al 10. ¡Voy a adivinarlo!");
+        System.out.println("Piensa en un número del 1 al 10.");
         while (bajo <= alto && !encontrado) {
             medio = (bajo + alto) / 2;
             adivinanza = (int) lista.get(medio);
